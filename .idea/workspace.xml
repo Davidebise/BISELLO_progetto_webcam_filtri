@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="6e29c70f-2321-457c-b590-701d61c3842b" name="Changes" comment="fixed effects">
+    <list default="true" id="6e29c70f-2321-457c-b590-701d61c3842b" name="Changes" comment="finished all effects">
+      <change afterPath="$PROJECT_DIR$/run.sh" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/effects.py" beforeDir="false" afterPath="$PROJECT_DIR$/effects.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/filters.py" beforeDir="false" afterPath="$PROJECT_DIR$/filters.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -53,6 +51,7 @@
     "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
     "RunOnceActivity.git.unshallow": "true",
     "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "SHELLCHECK.PATH": "I do mind",
     "codeWithMe.voiceChat.enabledByDefault": "false",
     "git-widget-placeholder": "master",
     "ignore.virus.scanning.warn.message": "true"
@@ -105,7 +104,15 @@
       <option name="project" value="LOCAL" />
       <updated>1779519184396</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="finished all effects">
+      <option name="closed" value="true" />
+      <created>1779524583511</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1779524583511</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -116,6 +123,7 @@
     <MESSAGE value="requisiti minimi" />
     <MESSAGE value="other filters" />
     <MESSAGE value="fixed effects" />
-    <option name="LAST_COMMIT_MESSAGE" value="fixed effects" />
+    <MESSAGE value="finished all effects" />
+    <option name="LAST_COMMIT_MESSAGE" value="finished all effects" />
   </component>
 </project>
