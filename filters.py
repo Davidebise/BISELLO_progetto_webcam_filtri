@@ -18,43 +18,42 @@ def sepia(frame):
     return cv2.convertScaleAbs(img_sepia)
 
 
-# --- NUOVI FILTRI ---
-
 def cartoon(frame):
-    # 1. Riduzione dei colori con Bilateral Filter (ripetuto 2 volte per non distruggere i FPS)
-    color = frame
+    h, w = frame.shape[:2]
+
+    # Sottocampionamento per preservare gli FPS (riduciamo a 1/2)
+    img_small = cv2.resize(frame, (w // 2, h // 2), interpolation=cv2.INTER_LINEAR)
+
+    # Applichiamo il filtro bilaterale sulla versione piccola
+    color_small = img_small
     for _ in range(2):
-        color = cv2.bilateralFilter(color, d=9, sigmaColor=75, sigmaSpace=75)
+        color_small = cv2.bilateralFilter(color_small, d=9, sigmaColor=75, sigmaSpace=75)
 
-    # 2. Rilevamento dei bordi su scala di grigi
+    # Riportiamo alle dimensioni originali
+    color = cv2.resize(color_small, (w, h), interpolation=cv2.INTER_LINEAR)
+
+    # Rilevamento dei bordi (passaggio in scala di grigi rapido)
     gray_img = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-    gray_blur = cv2.medianBlur(gray_img, 7)
-    edges = cv2.Canny(gray_blur, threshold1=50, threshold2=150)
+    gray_blur = cv2.medianBlur(gray_img, 5)
+    edges = cv2.Canny(gray_blur, threshold1=50, threshold2=130)
 
-    # 3. Inversione della maschera dei bordi (bordi neri su sfondo bianco)
+    # Inversione e sovrapposizione bordi neri
     edges_inv = cv2.bitwise_not(edges)
     edges_bgr = cv2.cvtColor(edges_inv, cv2.COLOR_GRAY2BGR)
 
-    # 4. Combinazione dei colori appiattiti con i bordi neri
     return cv2.bitwise_and(color, edges_bgr)
 
 
 def thermal(frame):
     gray_img = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-    # Applica la mappa di colore (COLORMAP_JET o COLORMAP_INFERNO)
     return cv2.applyColorMap(gray_img, cv2.COLORMAP_JET)
 
 
 def pixelate(frame, pixel_size=16):
-    # Evita divisioni per zero se la dimensione del pixel è errata
     h, w = frame.shape[:2]
     if pixel_size < 1:
         pixel_size = 1
-
-    # Calcola le dimensioni ridotte
     nw, nh = max(1, w // pixel_size), max(1, h // pixel_size)
-
-    # Rimpicciolisce e ri-ingrandisce con interpolazione NEAREST
     low_res = cv2.resize(frame, (nw, nh), interpolation=cv2.INTER_NEAREST)
     return cv2.resize(low_res, (w, h), interpolation=cv2.INTER_NEAREST)
 
@@ -62,19 +61,18 @@ def pixelate(frame, pixel_size=16):
 def vignette(frame):
     h, w = frame.shape[:2]
 
-    # Genera le matrici gaussiane per i due assi
-    kernel_x = cv2.getGaussianKernel(w, w / 2)
-    kernel_y = cv2.getGaussianKernel(h, h / 2)
-
-    # Crea la maschera 2D combinando i due vettori
+    # Usiamo un raggio più ampio per non scurire il centro dell'inquadratura
+    kernel_x = cv2.getGaussianKernel(w, w / 1.5)
+    kernel_y = cv2.getGaussianKernel(h, h / 1.5)
     mask_2d = kernel_y * kernel_x.T
 
-    # Normalizza la maschera in modo che il centro sia vicino a 1.0
-    mask_2d = mask_2d / mask_2d.max()
+    # Normalizzazione protetta
+    mask_max = mask_2d.max()
+    if mask_max > 0:
+        mask_2d = mask_2d / mask_max
 
-    # Estende la maschera a 3 canali (BGR)
+    # Rendiamo l'effetto meno aggressivo al centro alzando la luminosità di base della maschera
+    mask_2d = 0.3 + 0.7 * mask_2d
+
     mask_3d = np.dstack([mask_2d, mask_2d, mask_2d])
-
-    # Applica la maschera moltiplicando e riportando a uint8 senza perdere info
-    vignette_frame = np.uint8(frame * mask_3d)
-    return vignette_frame
+    return np.clip(frame * mask_3d, 0, 255).astype(np.uint8)
